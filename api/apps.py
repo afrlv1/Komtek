@@ -1,6 +1,5 @@
 from django.apps import AppConfig
 
 
-class ApiConfig(AppConfig):
+class TermserviceConfig(AppConfig):
     name = 'api'
-    verbose_name = 'Сервис терминологии'

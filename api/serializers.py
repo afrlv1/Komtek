@@ -1,18 +1,14 @@
 from rest_framework import serializers
-from .models import Guide, GuideElement
+from .models import Guide, Element
 
 
-class GuideSerializer(serializers.ModelSerializer):
+class GuideListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Guide
+        fields = '__all__'
 
-	class Meta:
-		model = Guide
-		fields = ('name', 'title', 'description', 'version', 'date')
 
-
-class GuideElementSerializer(serializers.ModelSerializer):
-
-	guide = serializers.CharField(source='guide.title', read_only=True)
-
-	class Meta:
-		model = GuideElement
-		fields = ('guide', 'code', 'value')
+class ElementListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Element
+        fields = ('id', 'code', 'value')

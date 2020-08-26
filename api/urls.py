@@ -1,10 +1,8 @@
 from django.urls import path
-from .views import GuideView, GuideElementView,  ValidateElementView
-
-app_name = 'guides'
+from . import views
 
 urlpatterns = [
-	path('guides/', GuideView.as_view()),
-	path('elements/', GuideElementView.as_view()),
-	path('validate/', ValidateElementView.as_view()),
+    path('guides/', views.GuideListView.as_view()),
+    path('elements/', views.ElementListView.as_view()),
+    path('validate/', views.ValidateElementListView.as_view()),
 ]
