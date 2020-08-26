@@ -12,10 +12,7 @@ class GuideListView(generics.ListAPIView):
         date = query_params.get('date', None)
 
         if date is not None:
-            #Directory.objects.filter(start_date__gte=date)
-            queryset_list = Guide.objects.raw('''SELECT * 
-                                                        FROM termservice_directory
-                                                        WHERE start_date >= %s''', [date])
+            queryset_list = Guide.objects.filter(start_date__gte=date)
         else:
             queryset_list = Guide.objects.all()
         return queryset_list
@@ -26,25 +23,18 @@ class ElementListView(generics.ListAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params
-        dir = query_params.get('dir', None)
+        guide = query_params.get('guide', None)
         version = query_params.get('version', None)
 
-        if dir is not None and version is None:
-            queryset_list = Element.objects.raw('''SELECT id, code, value   
-                                                    FROM termservice_item_directory 
-                                                    WHERE id_dir_id in 
-                                                        (SELECT Max(id) as id
-                                                        FROM termservice_directory 
-                                                        WHERE short_name = %s
-                                                        GROUP BY name)''', [dir])
+        if guide is not None and version is None:
+            queryset_list = Element.objects.filter(guide=guide)
+        elif guide is not None and version is not None:
+            queryset_list = Element.objects.filter(guide=guide, version=version)
+        else:
+            queryset_list = Element.objects.all()
 
-        elif dir is not None and version is not None:
-            queryset_list = Element.objects.raw('''SELECT id, code, value   
-                                                    FROM termservice_item_directory 
-                                                    WHERE id_dir_id in 
-                                                        (SELECT id as id
-                                                        FROM termservice_directory 
-                                                        WHERE short_name = %s and version = %s)''', [dir, version])
+        if not queryset_list:
+            queryset_list = [{'id': None, 'code': None, 'value': None}]
 
         return queryset_list
 
@@ -54,33 +44,20 @@ class ValidateElementListView(generics.ListAPIView):
 
     def get_queryset(self):
         query_params = self.request.query_params
-        dir = query_params.get('dir', None)
+        guide = query_params.get('guide', None)
         version = query_params.get('version', None)
         code = query_params.get('code', None)
 
-        if dir is not None and code is not None and version is None:
-            queryset_list = Element.objects.raw('''SELECT id, code, value   
-                                                    FROM termservice_item_directory 
-                                                    WHERE id_dir_id in 
-                                                        (SELECT Max(id) as id
-                                                        FROM termservice_directory 
-                                                        WHERE short_name = %s
-                                                        GROUP BY name) and code = %s''', [dir, code])
+        if guide is not None and code is not None and version is None:
+            queryset_list = Element.objects.filter(guide=guide, code=code)
 
-        elif dir is not None and code is not None and version is not None:
-            queryset_list = Element.objects.raw('''SELECT id, code, value   
-                                                    FROM termservice_item_directory 
-                                                    WHERE id_dir_id in 
-                                                        (SELECT id as id
-                                                        FROM termservice_directory 
-                                                        WHERE short_name = %s and version = %s) and code = %s''', [dir, version, code])
+        elif guide is not None and code is not None and version is not None:
+            queryset_list = Element.objects.filter(guide=guide, version=version, code=code)
+
+        else:
+            queryset_list = Element.objects.all()
 
         if not queryset_list:
-            queryset_list = [
-                {
-                'id': None,
-                'code': None,
-                'value': None
-                }
-            ]
+            queryset_list = [{'id': None, 'code': None, 'value': None}]
+
         return queryset_list
