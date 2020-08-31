@@ -11,4 +11,4 @@ class GuideListSerializer(serializers.ModelSerializer):
 class ElementListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Element
-        fields = ('id', 'code', 'value')
+        fields = '__all__'
