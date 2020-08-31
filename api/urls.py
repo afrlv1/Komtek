@@ -1,8 +1,10 @@
 from django.urls import path
-from . import views
+from rest_framework import routers
+from .views import GuideViewSet, ElementViewSet
 
-urlpatterns = [
-    path('guides/', views.GuideListView.as_view()),
-    path('elements/', views.ElementListView.as_view()),
-    path('validate/', views.ValidateElementListView.as_view()),
-]
+
+router = routers.DefaultRouter()
+router.register(r'guides', GuideViewSet)
+router.register(r'validate', ElementViewSet)
+
+urlpatterns = router.urls
